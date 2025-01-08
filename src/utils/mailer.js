@@ -7,6 +7,7 @@ const sendEmail = async (email, emailType, userId) => {
     try {
         //create a hashed token
         const hashedToken = await bcrypt.hash(userId.toString(), 10);
+        const encodedToken = encodeURIComponent(hashedToken);
 
         if (emailType === "VERIFY") {
             await User.findByIdAndUpdate(userId, {
@@ -35,8 +36,8 @@ const sendEmail = async (email, emailType, userId) => {
             from: 'cvsameehana@gmail.com',
             to: email,
             subject: emailType === "VERIFY" ? "Verify your email" : "Reset your password",
-            html: `<p>Click <a href="${process.env.DOMAIN}/verifyemail?token=${hashedToken}">here</a> to ${emailType === "VERIFY" ? "verify your email" : "reset your password"}
-            or copy and paste the link below in your browser. <br> ${process.env.DOMAIN}/verifyemail?token=${hashedToken}
+            html: `<p>Click <a href="${process.env.DOMAIN}/verifyemail?token=${encodedToken}">here</a> to ${emailType === "VERIFY" ? "verify your email" : "reset your password"}
+            or copy and paste the link below in your browser. <br> ${process.env.DOMAIN}/verifyemail?token=${encodedToken}
             </p>`
         }
 
