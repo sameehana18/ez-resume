@@ -110,7 +110,7 @@ const verifyUser = asyncHandler(async (req, res) => {
         return res.status(200).json(new ApiResponse(200, user, "User verified successfully"));
 
     } catch (error) {
-        console.error("Error while verifying user:", error);
+        // console.error("Error while verifying user:", error);
         throw new ApiError(500, "Something went wrong while verifying user");
     }
 });
@@ -231,28 +231,72 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
     }
 })
 
+const forgotPassword = asyncHandler(async (req, res) => {
+    try {
+        const {email} = req.body;
+    
+        const user = await User.findOne({email});
+    
+        if(!user){
+            throw new ApiError(404, "User not found");
+        }
+    
+        await sendEmail(email, "RESET", user._id);
+    
+        return res.status(200)
+        .json(new ApiResponse(
+            200,
+            "Reset password link sent to your email successfully"
+        ));
+    } catch (error) {
+        throw new ApiError(500, error?.message, "Something went wrong while sending reset password link");
+    }
+})
+
 const resetPassword = asyncHandler(async (req, res) => {
-    const {email, newPassword, confirmPassword} = req.body;
-
-    const user = await User.findOne({email});
-
-    if(!user){
-        throw new ApiError(404, "User not found");
+    try {
+        const {newPassword, confirmPassword} = req.body;
+    
+        const {token} = req.query;
+    
+        if(!newPassword || !confirmPassword){
+            throw new ApiError(400, "New password and confirm password are required");
+        }
+    
+        if(!token){
+            throw new ApiError(400, "Token is required");
+        }
+    
+        const decodedToken = decodeURIComponent(token);
+    
+        const user = await User.findOne({
+            resetToken: decodedToken,
+            resetTokenExpiry: {$gt: Date.now()}
+        });
+    
+        if(!user){
+            throw new ApiError(404, "User not found");
+        }
+    
+        if(newPassword !== confirmPassword){
+            throw new ApiError(400, "Passwords do not match");
+        }
+    
+        // const isPasswordValid = await user.isPasswordCorrect(newPassword);
+    
+        user.password = newPassword;
+        user.resetToken = null;
+        user.resetTokenExpiry = null;
+        await user.save();
+    
+        return res.status(200)
+        .json(new ApiResponse(200, user, "Password reset successfully"));
+    } catch (error) {
+        throw new ApiError(400, error?.message, "Something went wrong while resetting password");
     }
-
-    if(newPassword !== confirmPassword){
-        throw new ApiError(400, "Passwords do not match");
-    }
-
-    // const isPasswordValid = await user.isPasswordCorrect(newPassword);
-
-    user.password = newPassword;
-    await user.save({validateBeforeSave: false});
-
-    return res.status(200)
-    .json(new ApiResponse(200, user, "Password reset successfully"));
 });
 
 
 
-export { registerUser, verifyUser, loginUser, logoutUser, refreshAccessToken, resetPassword };
+export { registerUser, verifyUser, loginUser, logoutUser, refreshAccessToken,
+     forgotPassword, resetPassword };
