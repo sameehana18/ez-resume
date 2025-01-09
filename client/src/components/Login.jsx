@@ -1,6 +1,6 @@
 import React from "react";
 import {useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../config/axiosConfig.js";
 import {Link, useNavigate} from "react-router-dom";
 
 
@@ -15,17 +15,25 @@ function Login() {
 
     const [buttonDisabled, setButtonDisabled] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
 
-    const onLogin = async () => {
-        // e.preventDefault();
+    const onLogin = async (e) => {
+        e.preventDefault(); 
         try {
             setLoading(true);
-            const response = await axios.post("/api/v1/users/login", user);
+            setErrorMessage(""); // Reset error message
+            const response = await axios.post("/users/login", user);
             console.log("login success", response.data);
+
+            // Assuming successful login returns a token or user data
+            localStorage.setItem("token", response.data.accessToken);
+            // login(response.data.accessToken);
+            
 
             navigate("/dashboard");
         } catch (error) {
             console.log("login failed", error);
+            setErrorMessage("Login failed. Please check your credentials.");
         } finally {
             setLoading(false);
         }
@@ -58,10 +66,17 @@ function Login() {
                     Login or create account
                 </p>
 
-                <form>
-                    <div className="w-full mt-4">
+                <form onSubmit={onLogin}>
+                    <div className="relative flex items-center mt-4">
+                        <span className="absolute left-3">
+                            <img
+                                src="/icons8-email-96.png"
+                                alt="Email Icon"
+                                className="w-6 h-6 mt-2 mr-1"
+                            />
+                        </span>
                         <input
-                            className="block w-full px-4 py-2 mt-2 text-gray-600 placeholder-gray-500 bg-white border rounded-lg focus:border-purple-500 focus:ring-opacity-40 focus:outline-none focus:ring focus:ring-purple-300"
+                            className="block w-full px-10 py-2 mt-2 text-gray-600 placeholder-gray-500 bg-white border rounded-lg focus:border-purple-500 focus:ring-opacity-40 focus:outline-none focus:ring focus:ring-purple-300"
                             type="email"
                             value={user.email}
                             onChange={(e) =>
@@ -72,9 +87,16 @@ function Login() {
                         />
                     </div>
 
-                    <div className="w-full mt-4">
+                    <div className="relative flex items-center mt-4">
+                        <span className="absolute left-3">
+                            <img
+                                src="/icons8-password3-96.png"
+                                alt="Password Icon"
+                                className="w-6 h-6 mt-2 mr-1"
+                            />
+                        </span>
                         <input
-                            className="block w-full px-4 py-2 mt-2 text-gray-600 placeholder-gray-500 bg-white border rounded-lg  focus:border-purple-500 focus:ring-opacity-40 focus:outline-none focus:ring focus:ring-purple-300"
+                            className="block w-full px-10 py-2 mt-2 text-gray-600 placeholder-gray-500 bg-white border rounded-lg focus:border-purple-500 focus:ring-opacity-40 focus:outline-none focus:ring focus:ring-purple-300"
                             type="password"
                             value={user.password}
                             onChange={(e) =>
@@ -85,20 +107,24 @@ function Login() {
                         />
                     </div>
 
+                    {errorMessage && (
+                        <p className="mt-2 text-red-600 text-sm">{errorMessage}</p>
+                    )}
+
                     <div className="flex items-center justify-between mt-4">
                         <Link
                             to="/forgot-password"
-                            className="text-sm text-gray-600  hover:text-gray-500"
+                            className="text-sm text-gray-600 hover:text-gray-500"
                         >
                             Forget Password?
                         </Link>
 
                         <button
-                            onClick={onLogin}
-                            className="px-6 py-2 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-purple-700 rounded-lg hover:bg-purple-600 focus:outline-none focus:ring focus:ring-purple-300 focus:ring-opacity-50"
-                            disabled={buttonDisabled}
+                            type="submit" // Ensure this is a submit button
+                            className={`px-6 py-2 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-purple-700 rounded-lg hover:bg-purple-600 focus:outline-none focus:ring focus:ring-purple-300 focus:ring-opacity-50 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            disabled={buttonDisabled || loading} // Disable if loading or button is disabled
                         >
-                            Sign In
+                            {loading ? "Signing In..." : "Sign In"}
                         </button>
                     </div>
                 </form>
