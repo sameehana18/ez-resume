@@ -17,6 +17,7 @@ function Login() {
     const [loading, setLoading] = useState(false);
 
     const onLogin = async () => {
+        // e.preventDefault();
         try {
             setLoading(true);
             const response = await axios.post("/api/v1/users/login", user);

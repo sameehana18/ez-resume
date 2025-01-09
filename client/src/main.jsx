@@ -15,6 +15,9 @@ import Login from "./components/Login.jsx";
 import Signup from "./components/Signup.jsx";
 import Dashboard from "./components/Dashboard.jsx";
 import ForgotPassword from "./components/ForgotPassword.jsx";
+import { AuthProvider } from "./middlewares/AuthContext.jsx";
+import ProtectedRoute from "./middlewares/ProtectedRoute.jsx";
+import AuthLayout from "./middlewares/AuthLayout.jsx";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -22,40 +25,48 @@ const router = createBrowserRouter(
             path="/"
             element={<App />}
         >
-            <Route
-                path="home"
-                element={<Home />}
-            />
-            <Route
-                path="login"
-                element={<Login />}
-            />
-            <Route
-                path="signup"
-                element={<Signup />}
-            />
-            <Route
-                path="dashboard"
-                element={<Dashboard />}
-            />
-            <Route
-                path="forgot-password"
-                element={<ForgotPassword />}
-            />
-            {/* Redirect root path to /home */}
-            <Route
-                path="/"
-                element={
-                    <Navigate
-                        to="/home"
-                        replace
-                    />
-                }
-            />
-            <Route
-                path="*"
-                element={<div>404 Not Found</div>}
-            />
+            <Route element={<AuthLayout />}>
+                {" "}
+                {/* Use AuthLayout here */}
+                <Route
+                    path="home"
+                    element={<Home />}
+                />
+                <Route
+                    path="login"
+                    element={<Login />}
+                />
+                <Route
+                    path="signup"
+                    element={<Signup />}
+                />
+                <Route
+                    path="dashboard"
+                    element={
+                        <ProtectedRoute>
+                            <Dashboard />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="forgot-password"
+                    element={<ForgotPassword />}
+                />
+                {/* Redirect root path to /home */}
+                <Route
+                    index
+                    element={
+                        <Navigate
+                            to="/home"
+                            replace
+                        />
+                    }
+                />
+                <Route
+                    path="*"
+                    element={<div>404 Not Found</div>}
+                />
+            </Route>
         </Route>
     )
 );
