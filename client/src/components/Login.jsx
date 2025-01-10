@@ -2,11 +2,13 @@ import React from "react";
 import {useEffect, useState } from "react";
 import axios from "../config/axiosConfig.js";
 import {Link, useNavigate} from "react-router-dom";
+import {useAuth} from "../middlewares/AuthContext.jsx";
 
 
 
 function Login() {
     const navigate = useNavigate();
+    const {login, token} = useAuth();
 
     const [user, setUser] = useState({
         email: "",
@@ -26,18 +28,32 @@ function Login() {
             console.log("login success", response.data);
 
             // Assuming successful login returns a token or user data
-            localStorage.setItem("token", response.data.accessToken);
-            // login(response.data.accessToken);
+            // console.log("response data: ",response.data, "\n");
+            // console.log("response data data accessToken: ",response.data.data.accessToken, "\n");
+            const accessToken = response.data.data.accessToken;
+            localStorage.setItem("token", accessToken);
+            login(accessToken);
             
 
             navigate("/dashboard");
         } catch (error) {
             console.log("login failed", error);
-            setErrorMessage("Login failed. Please check your credentials.");
+
+            if(error.message && error.response.data){
+                setErrorMessage(error.response.data.message || "Login failed. Please check your credentials.");
+            }else{
+                setErrorMessage("Login failed. Please try again.");
+            }
         } finally {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        if(token){
+            navigate("/dashboard");
+        }
+    }, [token, navigate]);
 
     useEffect(() => {
         if (user.email.length > 0 && user.password.length > 0) {
