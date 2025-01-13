@@ -132,7 +132,7 @@ const Navbar = () => {
                                 >
                                     <div className="w-8 h-8 overflow-hidden border border-gray-400 rounded-full">
                                         <img
-                                            src="/icons8-user-96.png"
+                                            src={user?.avatar || "/icons8-user-96.png"}
                                             className="object-cover w-full h-full"
                                             alt="avatar"
                                         />
