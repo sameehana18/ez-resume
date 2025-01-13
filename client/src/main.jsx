@@ -18,6 +18,7 @@ import ForgotPassword from "./components/ForgotPassword.jsx";
 import { AuthProvider } from "./middlewares/AuthContext.jsx";
 import ProtectedRoute from "./middlewares/ProtectedRoute.jsx";
 import AuthLayout from "./middlewares/AuthLayout.jsx";
+import Settings from "./components/Settings.jsx";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -45,6 +46,14 @@ const router = createBrowserRouter(
                     element={
                         <ProtectedRoute>
                             <Dashboard />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="settings"
+                    element={
+                        <ProtectedRoute>
+                            <Settings />
                         </ProtectedRoute>
                     }
                 />

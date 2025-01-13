@@ -6,6 +6,8 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import { sendEmail } from "../utils/mailer.js";
+import { uploadAvatarToCloudinary, deleteAvatarFromCloudinary } from "../utils/cloudinary.js";
+
 
 const generateAccessAndRefreshTokens = async (userId) => {
     try {
@@ -296,7 +298,62 @@ const resetPassword = asyncHandler(async (req, res) => {
     }
 });
 
-
+const updateUser = asyncHandler(async (req, res) => {
+    try {
+      const avatarLocalPath = req.file?.path;
+      const { username, fullname, avatar } = req.body;
+  
+      if (!fullname || !username) {
+        throw new ApiError(400, "Fullname and username are required");
+      }
+  
+      const user = await User.findById(req.user._id);
+  
+      if (!user) {
+        throw new ApiError(404, "User not found");
+      }
+  
+      // If avatar is explicitly null, delete the existing avatar
+      if (avatar === null && user.avatar) {
+        // Only delete if user has an avatar with a valid public_id
+        if (user.avatar.public_id) {
+          await deleteAvatarFromCloudinary(user.avatar.public_id);
+        }
+        user.avatar = null; // Set avatar to null in the database
+      }
+  
+      // If a new avatar is uploaded, handle that
+      if (avatarLocalPath) {
+        // Delete old avatar if it exists
+        if (user.avatar && user.avatar.public_id) {
+          await deleteAvatarFromCloudinary(user.avatar.public_id);
+        }
+  
+        const result = await uploadAvatarToCloudinary(avatarLocalPath);
+        if (result) {
+          user.avatar = result.secure_url;
+        } else {
+          throw new ApiError(500, "Something went wrong while uploading avatar");
+        }
+      }
+  
+      // Update username and fullname
+      user.username = username;
+      user.fullname = fullname;
+  
+      await user.save();
+  
+      return res.status(200).json(new ApiResponse(
+        200,
+        user,
+        "User updated successfully"
+      ));
+    } catch (error) {
+      throw new ApiError(500, error?.message, "Something went wrong while updating user");
+    }
+  });
+  
+  
 
 export { registerUser, verifyUser, loginUser, logoutUser, refreshAccessToken,
-     forgotPassword, resetPassword };
+     forgotPassword, resetPassword, updateUser };
