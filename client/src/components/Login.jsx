@@ -31,7 +31,11 @@ function Login() {
             // console.log("response data: ",response.data, "\n");
             // console.log("response data data accessToken: ",response.data.data.accessToken, "\n");
             const accessToken = response.data.data.accessToken;
+            
+            // console.log("user: ", response.data.data.user);
+            const userData = response.data.data.user;
             localStorage.setItem("token", accessToken);
+            localStorage.setItem("user", JSON.stringify(userData));
             login(accessToken);
             
 
@@ -50,6 +54,7 @@ function Login() {
     };
 
     useEffect(() => {
+        const token = localStorage.getItem("token");
         if(token){
             navigate("/dashboard");
         }
@@ -68,8 +73,8 @@ function Login() {
             <div className="px-6 py-4">
                 <div className="flex justify-center mx-auto">
                     <img
-                        className="w-auto h-7 sm:h-8"
-                        src="/ez-high-resolution-logo.png"
+                        className="w-auto h-16 sm:h-20"
+                        src="/ezres-logo-removebg-preview.png"
                         alt=""
                     />
                 </div>

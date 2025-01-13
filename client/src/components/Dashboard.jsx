@@ -1,11 +1,13 @@
-import React from 'react'
+import React from "react";
+import Navbar from "./Navbar.jsx";
 
 function Dashboard() {
-  return (
-    <div>
-      Dashboard
-    </div>
-  )
+    return (
+        <div>
+          <Navbar />
+          dashboard
+        </div>
+    );
 }
 
-export default Dashboard
+export default Dashboard;
