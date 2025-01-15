@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %></title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container my-5">
+    <!-- Header -->
+    <div class="text-center mb-4">
+      <h1><%= personalInfo.firstName %> <%= personalInfo.lastName %></h1>
+      <p><%= personalInfo.jobTitle %></p>
+      <p><%= personalInfo.address %></p>
+      <p>
+        <i class="fas fa-phone"></i> <%= personalInfo.phone %> |
+        <i class="fas fa-envelope"></i> <%= personalInfo.email %>
+      </p>
+      <% if (personalInfo.links.length > 0) { %>
+        <p>
+          <% personalInfo.links.forEach(link => { %>
+            <a href="<%= link.url %>" target="_blank"><%= link.name %></a> |
+          <% }); %>
+        </p>
+      <% } %>
+    </div>
+
+    <!-- Education -->
+    <% if (education.length > 0) { %>
+      <section>
+        <h2 class="text-uppercase border-bottom pb-2">Education</h2>
+        <% education.forEach(edu => { %>
+          <div class="mb-4">
+            <h5><%= edu.institution %> | <%= edu.location %></h5>
+            <p><%= edu.degreeType %>, <%= edu.fieldOfStudy %></p>
+            <p><i><%= edu.startMonthYear %> - <%= edu.endMonthYear || 'Present' %></i></p>
+            <% if (edu.cgpa) { %>
+              <p>CGPA: <%= edu.cgpa.toFixed(2) %></p>
+            <% } %>
+          </div>
+        <% }); %>
+      </section>
+    <% } %>
+
+    <!-- Experience -->
+    <% if (experience.length > 0) { %>
+      <section>
+        <h2 class="text-uppercase border-bottom pb-2">Experience</h2>
+        <% experience.forEach(exp => { %>
+          <div class="mb-4">
+            <h5><%= exp.jobTitle %> | <%= exp.employer %></h5>
+            <p><i><%= exp.startMonthYear %> - <%= exp.endMonthYear || 'Present' %></i></p>
+            <p><%= exp.location %></p>
+            <p><%= exp.description %></p>
+          </div>
+        <% }); %>
+      </section>
+    <% } %>
+
+    <!-- Projects -->
+    <% if (projects.length > 0) { %>
+      <section>
+        <h2 class="text-uppercase border-bottom pb-2">Projects</h2>
+        <% projects.forEach(proj => { %>
+          <div class="mb-4">
+            <h5><%= proj.projectName %></h5>
+            <p>Technologies: <%= proj.techUsed.join(', ') %></p>
+            <p><%= proj.description %></p>
+            <p><a href="<%= proj.projectLink %>" target="_blank">Project Link</a></p>
+          </div>
+        <% }); %>
+      </section>
+    <% } %>
+
+    <!-- Skillset -->
+    <% if (Object.keys(skillset).length > 0) { %>
+      <section>
+        <h2 class="text-uppercase border-bottom pb-2">Skills</h2>
+        <ul>
+          <% if (skillset.programmingLanguages.length > 0) { %>
+            <li><strong>Programming Languages:</strong> <%= skillset.programmingLanguages.join(', ') %></li>
+          <% } %>
+          <% if (skillset.libraries.length > 0) { %>
+            <li><strong>Libraries:</strong> <%= skillset.libraries.join(', ') %></li>
+          <% } %>
+          <% if (skillset.tools.length > 0) { %>
+            <li><strong>Tools:</strong> <%= skillset.tools.join(', ') %></li>
+          <% } %>
+          <% if (skillset.databases.length > 0) { %>
+            <li><strong>Databases:</strong> <%= skillset.databases.join(', ') %></li>
+          <% } %>
+        </ul>
+      </section>
+    <% } %>
+
+    <!-- Certifications -->
+    <% if (certifications.length > 0) { %>
+      <section>
+        <h2 class="text-uppercase border-bottom pb-2">Certifications</h2>
+        <ul>
+          <% certifications.forEach(cert => { %>
+            <li>
+              <strong><%= cert.certificateName %></strong> - <%= cert.issuedBy %>
+              <% if (cert.certificateLink) { %>
+                (<a href="<%= cert.certificateLink %>" target="_blank">Certificate Link</a>)
+              <% } %>
+            </li>
+          <% }); %>
+        </ul>
+      </section>
+    <% } %>
+  </div>
+
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</body>
+</html>

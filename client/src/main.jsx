@@ -8,7 +8,7 @@ import {
     RouterProvider,
     createBrowserRouter,
     createRoutesFromElements,
-    Navigate, // Import Navigate
+    Navigate,
 } from "react-router-dom";
 import Home from "./components/Home.jsx";
 import Login from "./components/Login.jsx";
@@ -19,6 +19,7 @@ import { AuthProvider } from "./middlewares/AuthContext.jsx";
 import ProtectedRoute from "./middlewares/ProtectedRoute.jsx";
 import AuthLayout from "./middlewares/AuthLayout.jsx";
 import Settings from "./components/Settings.jsx";
+import EditResume from "./components/EditResume.jsx";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -27,8 +28,6 @@ const router = createBrowserRouter(
             element={<App />}
         >
             <Route element={<AuthLayout />}>
-                {" "}
-                {/* Use AuthLayout here */}
                 <Route
                     path="home"
                     element={<Home />}
@@ -48,7 +47,17 @@ const router = createBrowserRouter(
                             <Dashboard />
                         </ProtectedRoute>
                     }
-                />
+                >
+                    {/* Nested route for editing a resume */}
+                    <Route
+                        path="resume/:resumeId/edit"
+                        element={
+                            <ProtectedRoute>
+                                <EditResume />
+                            </ProtectedRoute>
+                        }
+                    />
+                </Route>
                 <Route
                     path="settings"
                     element={
