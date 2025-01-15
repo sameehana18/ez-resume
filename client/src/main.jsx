@@ -20,6 +20,7 @@ import ProtectedRoute from "./middlewares/ProtectedRoute.jsx";
 import AuthLayout from "./middlewares/AuthLayout.jsx";
 import Settings from "./components/Settings.jsx";
 import EditResume from "./components/EditResume.jsx";
+import PageNotFound from "./components/PageNotFound.jsx";
 
 const router = createBrowserRouter(
     createRoutesFromElements(
@@ -82,7 +83,7 @@ const router = createBrowserRouter(
                 />
                 <Route
                     path="*"
-                    element={<div>404 Not Found</div>}
+                    element={<PageNotFound />}
                 />
             </Route>
         </Route>

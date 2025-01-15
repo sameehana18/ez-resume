@@ -63,11 +63,63 @@ const getAllResumesOfUser = asyncHandler(async (req, res) => {
         .json(new ApiResponse(
             200,
             resumes,
-            "Resumes found successfully"
+            "Resumes fetched successfully"
         ))
     } catch (error) {
         throw new ApiError(500, "Something went wrong while getting resumes of user");
     }
 });
 
-export { createResume, getAllResumesOfUser };
+const getResumeWithId = asyncHandler(async (req, res) => {
+    const {resumeId} = req.params;
+
+    if(!resumeId){
+        throw new ApiError(404, "ResumeId is required");
+    }
+
+    try {
+        const resume = await Resume.findById(resumeId)
+        .select("-personalInfo -skillset -education -experience -projects -certifications");
+
+        if(!resume){
+            throw new ApiError(500, "Resume not found");
+        }
+
+        return res.status(200)
+        .json(new ApiResponse(
+            200,
+            resume,
+            "Resume fetched successfully"
+        ));
+    } catch (error) {
+        throw new ApiError(500, "Something went wrong while getting resume with id");
+    }
+})
+
+const deleteResume = asyncHandler(async (req, res) => {
+    const {resumeId} = req.params;
+
+    if(!resumeId){
+        throw new ApiError(404, "ResumeId is required");
+    }
+
+    try {
+        const resume = await Resume.findByIdAndDelete(resumeId);
+
+        if(!resume){
+            throw new ApiError(404, "Resume not found and could not be deleted");
+        }
+
+        return res.status(200)
+        .json(new ApiResponse(
+            200,
+            resume._id,
+            "Resume deleted successfully"
+        ));
+
+    } catch (error) {
+        throw new ApiError(500, "Something went wrong while deleting resume");
+    }
+})
+
+export { createResume, getAllResumesOfUser, getResumeWithId, deleteResume };
