@@ -135,7 +135,7 @@ function AddResume() {
             <h1 className="text-2xl font-bold w-full mb-4 pl-10 pt-4">
                 {user?.username}'s Dashboard
             </h1>
-            <div className="bg-gray-100 h-screen w-auto flex flex-wrap gap-4 p-10">
+            <div className="bg-purple-50 h-screen w-auto flex flex-wrap gap-4 p-10">
                 <button
                     onClick={handleOpenModal}
                     className="w-48 h-64 bg-white flex flex-col justify-center items-center shadow-md rounded-lg cursor-pointer hover:shadow-lg hover:bg-gray-200 hover:scale-105 focus:outline-none"

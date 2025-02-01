@@ -78,8 +78,7 @@ const getResumeWithId = asyncHandler(async (req, res) => {
     }
 
     try {
-        const resume = await Resume.findById(resumeId)
-        .select("-personalInfo -skillset -education -experience -projects -certifications");
+        const resume = await Resume.findById(resumeId);
 
         if(!resume){
             throw new ApiError(500, "Resume not found");
@@ -122,4 +121,38 @@ const deleteResume = asyncHandler(async (req, res) => {
     }
 })
 
-export { createResume, getAllResumesOfUser, getResumeWithId, deleteResume };
+const updateResume = asyncHandler(async (req, res) => {
+    const {resumeId} = req.params;
+    const resumeData = req.body;
+
+    // console.log("resumeData: ", resumeData);
+
+    if(!resumeId){
+        throw new ApiError(404, "ResumeId is required");
+    }
+
+    try {
+        const resume = await Resume.findById(resumeId);
+
+        if(!resume){
+            throw new ApiError(404, "Resume not found");
+        }
+
+        const updatedResume = await Resume.findByIdAndUpdate(resumeId, resumeData, {new: true});
+
+        if(!updatedResume){
+            throw new ApiError(500, "Something went wrong while updating resume");
+        }
+
+        return res.status(200)
+        .json(new ApiResponse(
+            200,
+            updatedResume,
+            "Resume updated successfully"
+        ));
+    } catch (error) {
+        throw new ApiError(500, "Something went wrong while updating resume");
+    }
+})
+
+export { createResume, getAllResumesOfUser, getResumeWithId, deleteResume, updateResume };
