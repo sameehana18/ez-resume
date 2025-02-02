@@ -25,13 +25,15 @@ function PersonalInfo({ resumeInfo }) {
             </div>
 
             <div className="text-center mt-1">
-                {resumeInfo?.personalInfo?.links.map((link, index) => (
-                    <span key={index}>
-                        <a href={link.url} target="_blank" className="text-xs text-black font-bold">{link.name}</a>
-                        {index < resumeInfo.personalInfo.links.length -1 && " | "}
-                    </span>
-                    
-                ))}
+                {resumeInfo?.personalInfo?.links && resumeInfo.personalInfo.links.length > 0 ? (
+                    resumeInfo?.personalInfo?.links.map((link, index) => (
+                        <span key={index}>
+                            <a href={link.url} target="_blank" className="text-xs text-black font-bold">{link.name}</a>
+                            {index < resumeInfo.personalInfo.links.length -1 && " | "}
+                        </span>
+                        
+                    ))
+                ) : (<p className="text-sm text-gray-500">No Links available</p>)}
             </div>
         </div>
     );
